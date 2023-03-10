@@ -22,10 +22,3 @@ class Item(BaseModel):
     id: Optional[int] = Field(description="Unique integer specified for item")
     category: Optional[Category] = Field(description="Item category")
     
-    
-class User(BaseModel):
-    name: str
-    surname: str
-    nickname: str
-    id: int
-    email: str
