@@ -2,12 +2,13 @@ from fastapi import APIRouter, HTTPException, Path, Query, status
 from fastapi.encoders import jsonable_encoder
 from item_model import Item
 from sqlalchemy.future import select
-from database import async_session
-from typing import List, Dict
+from database import get_session
+from typing import List
 import db_models
 
 
 router = APIRouter()
+async_session = get_session()
 
 async def get_db():
     async with async_session() as session:
@@ -15,7 +16,7 @@ async def get_db():
 
 async def load_items():
     try:
-        async with get_db() as session:
+        async with async_session() as session:
             stmt = select(db_models.Item)
             result = await session.execute(stmt)
             items = result.scalars().all()
@@ -45,7 +46,7 @@ async def create_item(item: Item) -> dict[str, Item]:
         is_in_stock=item.is_in_stock
     )
     
-    async with get_db() as db:
+    async with async_session() as db:
         db.add(new_item)
         db.commit()
     
