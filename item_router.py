@@ -47,7 +47,11 @@ async def create_item(item: Item) -> dict[str, Item]:
     )
     
     async with async_session() as db:
-        db.add(new_item)
-        db.commit()
+        try:
+            db.add(new_item)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
     return new_item
